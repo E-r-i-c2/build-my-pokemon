@@ -1,0 +1,8 @@
+Make a system to generate the base card
+Make a system to add ribbons, backs, charms, etc to cards
+Make a system to change stats on cards
+Make a combat system for card to card battle - Kyle
+Create an open world setting - Kyle
+Make character with movement and interactions
+Implement multiple characters in the same world
+Implement pvp 
