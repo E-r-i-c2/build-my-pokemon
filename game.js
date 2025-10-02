@@ -405,8 +405,8 @@ function drawMap() {
     ctx.restore();
 }
 
-// Draw map overlay (structures that appear in front of player)
-function drawMapOverlay() {
+// Draw map overlay (structures that can appear in front or behind player depending on depth)
+function drawMapOverlayPass(shouldDrawInThisPass) {
     const camera = gameState.camera;
     const player = gameState.player;
     
@@ -425,18 +425,51 @@ function drawMapOverlay() {
     for (let y = startY; y < endY; y++) {
         for (let x = startX; x < endX; x++) {
             const tileType = gameMap[y][x];
-            const screenX = x * CONFIG.TILE_SIZE - camera.x;
-            const screenY = y * CONFIG.TILE_SIZE - camera.y;
+            if (tileType !== TILE_TYPES.TORIIGATE && tileType !== TILE_TYPES.TREE && tileType !== TILE_TYPES.GRASS) continue;
             
-            // Only draw structures that should appear in front of player
-            if (tileType === TILE_TYPES.TORIIGATE || tileType === TILE_TYPES.TREE || tileType === TILE_TYPES.GRASS) {
-                drawOverlayStructure(screenX, screenY, tileType, x, y);
+            const tileWorldX = x * CONFIG.TILE_SIZE;
+            const tileWorldY = y * CONFIG.TILE_SIZE;
+            
+            // Compute overlay object's vertical bounds
+            let overlayTopY = tileWorldY;
+            let overlayBottomY = tileWorldY + CONFIG.TILE_SIZE;
+            let shouldDrawThisTile = true;
+            
+            // Large torii gate is drawn once from its top-left tile (2,2)
+            if (tileType === TILE_TYPES.TORIIGATE && x >= 2 && x <= 6 && y >= 2 && y <= 6) {
+                if (x === 2 && y === 2) {
+                    overlayTopY = 2 * CONFIG.TILE_SIZE;
+                    overlayBottomY = (6 + 1) * CONFIG.TILE_SIZE; // bottom edge of the 5x5 gate area
+                } else {
+                    // Skip other tiles of the large gate to avoid multiple draws
+                    shouldDrawThisTile = false;
+                }
             }
+            
+            if (!shouldDrawThisTile) continue;
+            
+            // Decide pass based on whether the object's bottom is below the player's y (draw in front then)
+            const drawInFrontOfPlayer = overlayBottomY >= player.y;
+            if (!shouldDrawInThisPass(drawInFrontOfPlayer)) continue;
+            
+            const screenX = tileWorldX - camera.x;
+            const screenY = tileWorldY - camera.y;
+            drawOverlayStructure(screenX, screenY, tileType, x, y);
         }
     }
     
     // Restore the canvas state
     ctx.restore();
+}
+
+function drawMapOverlayBeforePlayer() {
+    // Draw overlays that are behind the player (visually above the player)
+    return drawMapOverlayPass((drawInFrontOfPlayer) => !drawInFrontOfPlayer);
+}
+
+function drawMapOverlayAfterPlayer() {
+    // Draw overlays that are in front of the player (visually below the player)
+    return drawMapOverlayPass((drawInFrontOfPlayer) => drawInFrontOfPlayer);
 }
 
 // Draw overlay structures (trees, bushes, torii gate)
@@ -564,8 +597,9 @@ function gameLoop() {
     
     // Draw everything with proper layering
     drawMap();
+    drawMapOverlayBeforePlayer();
     drawPlayer();
-    drawMapOverlay(); // Draw structures that should appear in front of player
+    drawMapOverlayAfterPlayer(); // Draw structures that should appear in front of player
     drawUI();
     
     // Continue the loop
@@ -595,3 +629,30 @@ async function startGame() {
 
 // Initialize the game
 startGame();
+
+// Card Creator toggle logic
+(function initCardCreatorToggle() {
+    const toggleBtn = document.getElementById('cardCreatorToggle');
+    const panel = document.getElementById('cardCreatorPanel');
+    const closeBtn = document.getElementById('cardCreatorClose');
+
+    if (!toggleBtn || !panel || !closeBtn) return;
+
+    function openPanel() {
+        panel.classList.add('open');
+        panel.setAttribute('aria-hidden', 'false');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+    }
+    function closePanel() {
+        panel.classList.remove('open');
+        panel.setAttribute('aria-hidden', 'true');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+    function togglePanel() {
+        const isOpen = panel.classList.contains('open');
+        if (isOpen) closePanel(); else openPanel();
+    }
+
+    toggleBtn.addEventListener('click', togglePanel);
+    closeBtn.addEventListener('click', closePanel);
+})();

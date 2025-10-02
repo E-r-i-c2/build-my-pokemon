@@ -15,6 +15,39 @@
             <p>ESC to pause</p>
         </div>
     </div>
+
+    <!-- Card Creator side panel -->
+    <button id="cardCreatorToggle" class="card-creator-toggle" aria-expanded="false" aria-controls="cardCreatorPanel">Card Creator</button>
+    <aside id="cardCreatorPanel" class="card-creator-panel" aria-hidden="true">
+        <header class="card-creator-header">
+            <h3>Card Creator</h3>
+            <button id="cardCreatorClose" class="card-creator-close" aria-label="Close">×</button>
+        </header>
+        <div class="card-creator-content">
+            <div class="form-row">
+                <label for="ccName">Name</label>
+                <input id="ccName" type="text" placeholder="Pika..." />
+            </div>
+            <div class="form-row">
+                <label for="ccType">Type</label>
+                <select id="ccType">
+                    <option value="electric">Electric</option>
+                    <option value="fire">Fire</option>
+                    <option value="water">Water</option>
+                    <option value="grass">Grass</option>
+                    <option value="rock">Rock</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label for="ccHp">HP</label>
+                <input id="ccHp" type="number" min="10" max="300" value="60" />
+            </div>
+            <div class="form-row">
+                <button id="ccGenerate" class="primary">Generate</button>
+            </div>
+        </div>
+    </aside>
+
     <script src="game.js"></script>
 </body>
 </html>
