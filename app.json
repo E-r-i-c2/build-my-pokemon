@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Pokemon Card Battle",
+    "slug": "pokemon-card-battle",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0f0f23"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.pokemoncardbattle.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0f0f23"
+      },
+      "package": "com.pokemoncardbattle.app"
+    }
+  }
+}
