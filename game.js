@@ -3,7 +3,7 @@ const CONFIG = {
     TILE_SIZE: 32,
     MAP_WIDTH: 50,
     MAP_HEIGHT: 40,
-    PLAYER_SPEED: 0.5,
+    PLAYER_SPEED: 2.0,
     CAMERA_ZOOM: 2.5,
     CAMERA_SMOOTHING: 0.08
 };
